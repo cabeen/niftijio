@@ -1,7 +1,6 @@
 niftijio
-========
 
-A Java library for reading and writing NIfTI volumesniftijio
+A Java library for reading and writing NIfTI volumes
 ========
 
 This project is a Java library for reading and writing NIfTI image
