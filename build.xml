@@ -1,0 +1,31 @@
+<?xml version = '1.0' encoding = 'ISO-8859-1' ?>
+<project name="niftijio" default="dist">
+
+	<target name="init" > 
+		<mkdir dir="build" />
+		<mkdir dir="build/classes" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac srcdir="src" destdir="build/classes" excludes="test**" target="1.6" debug="on" debuglevel="lines,vars,source" includeantruntime="false"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar jarfile="build/niftijio.jar" >
+			<fileset dir="build/classes" />
+			<manifest>
+				<attribute name="Main-Class" value="niftijio.Example" />
+				<attribute name="Author" value="Ryan Cabeen" />
+			</manifest>
+		</jar>
+	</target>
+
+    <target name="dist" depends="jar">
+		<mkdir dir="dist" />
+        <copy file="build/niftijio.jar" tofile="dist/niftijio.jar"/>
+    </target>
+
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+</project>
