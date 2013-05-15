@@ -1,0 +1,9 @@
+1.1
+===
+Updated NiftiHeader.java to fix constructor bug
+Added orientation checking to NiftiHeader.java
+Added volume generation example to Example.java
+
+1.0
+===
+Initial import
