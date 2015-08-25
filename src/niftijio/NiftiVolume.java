@@ -16,12 +16,12 @@ import java.util.zip.GZIPOutputStream;
 public class NiftiVolume
 {
     public NiftiHeader header;
-    public double[][][][] data;
+    public FourDimensionalArray data;
 
     public NiftiVolume(int nx, int ny, int nz, int dim)
     {
         this.header = new NiftiHeader(nx, ny, nz, dim);
-        this.data = new double[nx][ny][nz][dim];
+        this.data = new FourDimensionalArray(nx,ny,nz,dim);
     }
 
     public NiftiVolume(NiftiHeader hdr)
@@ -38,18 +38,12 @@ public class NiftiVolume
         if (dim == 0)
             dim = 1;
 
-        this.data = new double[nx][ny][nz][dim];
+        this.data = new FourDimensionalArray(nx,ny,nz,dim);
     }
 
     public NiftiVolume(double[][][][] data)
     {
-        int nx = data.length;
-        int ny = data[0].length;
-        int nz = data[0][0].length;
-        int dim = data[0][0][0].length;
-
-        this.header = new NiftiHeader(nx, ny, nz, dim);
-        this.data = data;
+        this.data = new FourDimensionalArray(data);
     }
 
     public static NiftiVolume read(String filename) throws IOException
@@ -145,7 +139,7 @@ public class NiftiVolume
                             throw new IOException("Sorry, cannot yet read nifti-1 datatype " + NiftiHeader.decodeDatatype(hdr.datatype));
                         }
 
-                        out.data[i][j][k][d] = v;
+                        out.data.set(i,j,k,d,v);
                     }
         }
 
@@ -180,7 +174,7 @@ public class NiftiVolume
                 for (int j = 0; j < ny; j++)
                     for (int i = 0; i < nx; i++)
                     {
-                        double v = this.data[i][j][k][d];
+                        double v = this.data.get(i,j,k,d);
 
                         switch (hdr.datatype)
                         {

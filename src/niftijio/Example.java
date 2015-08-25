@@ -2,7 +2,6 @@ package niftijio;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.File;
 
 public class Example
 {
@@ -29,7 +28,7 @@ public class Example
                     for (int k = 0; k < nz; k++)
                         for (int j = 0; j < ny; j++)
                             for (int i = 0; i < nx; i++)
-                                volume.data[i][j][k][d] = count++;
+                                volume.data.set(i,j,k,d,count++);
                 volume.write("example.nii.gz");
             }
             else
@@ -62,7 +61,7 @@ public class Example
                         for (int k = 0; k < nz; k++)
                             for (int j = 0; j < ny; j++)
                                 for (int i = 0; i < nx; i++)
-                                    out.println(volume.data[i][j][k][d]);
+                                    out.println(volume.data.get(i,j,k,d));
 
                     out.println();
                     out.close();
