@@ -1,7 +1,15 @@
 package niftijio;
 
-/**
- * Created by bouabene on 8/25/15.
+/* Four-dimensional array implementation that avoids using java's multi-dimensional arrays.
+        * <p/>
+        * For very large images, java's multi-dimensional arrays cause too much overhead and eventually
+        * result in either heap or garbage collection issues. This implementation uses one single large array
+        * while providing a 4D access interface.
+        *
+        * Method names should be self-explanatory.
+        * @author Ghazi Bouabene, University of Basel, Switzerland
+        *
+        *
  */
 public class FourDimensionalArray {
 
