@@ -576,6 +576,11 @@ public class NiftiHeader
         return info;
     }
 
+    public void dump()
+    {
+        dump(new PrintWriter(System.out));
+    }
+
     public void dump(PrintWriter writer)
     {
         Map<String,String> attrs = info();
