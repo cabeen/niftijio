@@ -1,5 +1,6 @@
 package niftijio;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -8,12 +9,14 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.Date;
+import java.util.List;
 
 public class NiftiHeader
 {
@@ -110,8 +113,8 @@ public class NiftiHeader
     public short freq_dim, phase_dim, slice_dim;
     public short xyz_unit_code, t_unit_code;
     public short qfac;
-    public Vector<int[]> extensions_list;
-    public Vector<byte[]> extension_blobs;
+    public List<int[]> extensions_list;
+    public List<byte[]> extension_blobs;
 
     public int sizeof_hdr;
     public StringBuffer data_type_string;
@@ -431,10 +434,10 @@ public class NiftiHeader
         dim = new short[8];
         for (int i = 0; i < 8; i++)
             dim[i] = 0;
-        dim[1] = 0;
-        dim[2] = 0;
-        dim[3] = 0;
-        dim[4] = 0;
+        //dim[1] = 0;
+        //dim[2] = 0;
+        //dim[3] = 0;
+        //dim[4] = 0;
         intent = new float[3];
         for (int i = 0; i < 3; i++)
             intent[i] = (float) 0.0;
@@ -504,10 +507,8 @@ public class NiftiHeader
         for (int i = 0; i < 4; i++)
             extension[i] = (byte) 0;
 
-        extensions_list = new Vector<int[]>(5);
-        extension_blobs = new Vector<byte[]>(5);
-
-        return;
+        extensions_list = new ArrayList<int[]>(5);
+        extension_blobs = new ArrayList<byte[]>(5);
     }
 
     public Map<String,String> info()
@@ -575,11 +576,11 @@ public class NiftiHeader
         return info;
     }
 
-    public void print()
+    public void dump(PrintWriter writer)
     {
         Map<String,String> attrs = info();
-        for (String name : attrs.keySet())
-            System.out.println(name + ": " + attrs.get(name) + "\n");
+        for (Map.Entry<String,String> e : attrs.entrySet())
+            writer.println(e.getKey() + ": " + e.getValue());
     }
 
     private static byte[] setStringSize(StringBuffer s, int n)
@@ -601,39 +602,66 @@ public class NiftiHeader
         return (b);
     }
 
-    private static boolean littleEndian(String fn) throws IOException
+    private static boolean littleEndian(InputStream stream) throws IOException
     {
-        InputStream is = new FileInputStream(fn);
-        if (fn.endsWith(".gz"))
-            is = new GZIPInputStream(is);
-        DataInputStream di = new DataInputStream(is);
+        if (!stream.markSupported()) {
+            throw new IllegalArgumentException("stream does not support marks");
+        }
+        
+        stream.mark(42);
+        DataInputStream di = new DataInputStream(stream);
 
         di.skipBytes(40);
         short s = di.readShort();
 
-        di.close();
+        stream.reset();
         return (s < 1) || (s > 7);
     }
-
-    public static NiftiHeader read(String fn) throws IOException
-    {
-        DataInput di;
-
-        boolean le = littleEndian(fn);
-
-        InputStream is = new FileInputStream(fn);
-        if (fn.endsWith(".gz"))
+    
+    /** Read a NIFTI header from a file.
+     * 
+     * @param filename the name of the file to read the header from
+     * @return
+     * @throws IOException 
+     */
+    public static NiftiHeader read(String filename) throws IOException {
+        InputStream is = new FileInputStream(filename);
+        if (filename.endsWith(".gz"))
             is = new GZIPInputStream(is);
+        try {
+            return read(is, filename);
+        } finally {
+            is.close();
+        }
+    }
 
-        if (le)
-            di = new LEDataInputStream(is);
-        else
-            di = new DataInputStream(is);
+    /** Read a NIFTI header from a binary data input stream. This method assumes that the content retrieved
+     * from the input stream is already uncompressed.
+     * 
+     * @param is a stream to read the NIFTI header from, uncompressed. This will not close the stream!
+     * @param filename the original file name of the header, can be null
+     * @return
+     * @throws IOException 
+     */
+    public static NiftiHeader read(InputStream is, String filename) throws IOException {
+        BufferedInputStream bufferedStream = (!(is instanceof BufferedInputStream))
+                ? new BufferedInputStream(is)
+                : (BufferedInputStream)is;
+        
+        boolean le = littleEndian(bufferedStream);
 
+        DataInput di = le ? new LEDataInputStream(bufferedStream)
+                : new DataInputStream(bufferedStream);
+        
         NiftiHeader ds = new NiftiHeader();
-
-        ds.filename = fn;
+        ds.filename = filename;
         ds.little_endian = le;
+        
+        return readMain(di, ds);
+    }
+
+    private static NiftiHeader readMain(DataInput di, NiftiHeader ds) throws IOException
+    {
         ds.sizeof_hdr = di.readInt();
 
         byte[] bb = new byte[10];

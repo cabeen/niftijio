@@ -1,4 +1,5 @@
 package niftijio;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInput;
@@ -46,17 +47,49 @@ public class NiftiVolume
         this.data = new FourDimensionalArray(data);
     }
 
-    public static NiftiVolume read(String filename) throws IOException
-    {
+    public static NiftiVolume read(String filename) throws IOException {
         NiftiHeader hdr = NiftiHeader.read(filename);
 
         InputStream is = new FileInputStream(hdr.filename);
-
         if (hdr.filename.endsWith(".gz"))
             is = new GZIPInputStream(is);
+        try {
+            return read(new BufferedInputStream(is), hdr);
+        } finally {
+            is.close();
+        }
+    }
 
-        is = new BufferedInputStream(is);
+    /** Read the NIFTI volume from a NIFTI input stream.
+     * 
+     * @param is an input stream pointing to the beginning of the NIFTI file, uncompressed.
+     * @return a NIFTI volume
+     * @throws IOException 
+     */
+    public static NiftiVolume read(InputStream is) throws IOException {
+        return read(is, null);
+    }
 
+    /** Read the NIFTI volume from a NIFTI input stream.
+     * 
+     * @param is an input stream pointing to the beginning of the NIFTI file, uncompressed. The operation will close the stream.
+     * @param filename the name of the original file, can be null
+     * @return a NIFTI volume
+     * @throws IOException 
+     */
+    public static NiftiVolume read(InputStream is, String filename) throws IOException {
+        BufferedInputStream bis = new BufferedInputStream(is);
+        try {
+            bis.mark(2048);
+            NiftiHeader hdr = NiftiHeader.read(bis, filename);
+            bis.reset();
+            return read(bis, hdr);
+        } finally {
+            bis.close();
+        }
+    }
+
+    private static NiftiVolume read(BufferedInputStream is, NiftiHeader hdr) throws IOException {
         // skip header
         is.skip((long) hdr.vox_offset);
 
