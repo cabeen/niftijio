@@ -1,4 +1,4 @@
-package niftijio;
+package com.ericbarnhill.niftijio;
 
 import java.io.IOException;
 import java.io.PrintWriter;
