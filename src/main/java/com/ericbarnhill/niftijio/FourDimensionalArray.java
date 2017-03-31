@@ -51,8 +51,6 @@ public class FourDimensionalArray {
     }
 
     public double[][][][] toArray() {
-        // TESTING
-        System.out.println(nx + " " + ny + " " + nz + " " + dim);
         double[][][][] array = new double[nx][ny][nz][dim];
         for (int d = 0; d < dim; d++)
             for (int k = 0; k < nz; k++)
