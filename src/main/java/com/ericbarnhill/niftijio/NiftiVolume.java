@@ -50,6 +50,11 @@ public class NiftiVolume
     public NiftiVolume(double[][][][] data)
     {
         this.data = new FourDimensionalArray(data);
+        final int nx = data.length;
+        final int ny = data[0].length;
+        final int nz = data[0][0].length;
+        final int dim = data[0][0][0].length;
+        this.header = new NiftiHeader(nx, ny, nz, dim);
     }
 
     public static NiftiVolume read(String filename) throws IOException {
@@ -202,7 +207,6 @@ public class NiftiVolume
         int ny = hdr.dim[2];
         int nx = hdr.dim[1];
         if (hdr.datatype == NiftiHeader.NIFTI_TYPE_COMPLEX64) {
-            System.out.println("Complex write");
             nx = nx*2;
         } 
         OutputStream os = new BufferedOutputStream(new FileOutputStream(hdr.filename));
