@@ -1,4 +1,4 @@
-package niftijio;
+package com.ericbarnhill.niftijio;
 /*
  * [LEDataOutputStream.java]
  *

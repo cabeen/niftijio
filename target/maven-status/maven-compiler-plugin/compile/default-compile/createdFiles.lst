@@ -1,0 +1,8 @@
+com/ericbarnhill/niftijio/NiftiVolume.class
+com/ericbarnhill/niftijio/LEDataInputStream.class
+com/ericbarnhill/niftijio/FourDimensionalArray.class
+com/ericbarnhill/niftijio/NiftiHeader.class
+com/ericbarnhill/niftijio/ArrayToNifti.class
+com/ericbarnhill/niftijio/DuplicationTest.class
+com/ericbarnhill/niftijio/LEDataOutputStream.class
+com/ericbarnhill/niftijio/Example.class

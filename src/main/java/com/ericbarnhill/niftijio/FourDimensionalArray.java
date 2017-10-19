@@ -1,4 +1,4 @@
-package niftijio;
+package com.ericbarnhill.niftijio;
 
 /* Four-dimensional array implementation that avoids using java's multi-dimensional arrays.
         * <p/>
@@ -25,10 +25,10 @@ public class FourDimensionalArray {
     }
 
     public FourDimensionalArray(double[][][][] array) {
-        int nx = array.length;
-        int ny = array[0].length;
-        int nz = array[0][0].length;
-        int dim = array[0][0][0].length;
+        this.nx = array.length;
+        this.ny = array[0].length;
+        this.nz = array[0][0].length;
+        this.dim = array[0][0][0].length;
 
         this.data = new double[nx * ny * nz * dim];
 
@@ -48,6 +48,17 @@ public class FourDimensionalArray {
     public void set(int x, int y, int z, int d, double val) {
         int idx = d * (nx * ny * nz) + z * (nx * ny) + y * nx + x;
         data[idx] = val;
+    }
+
+    public double[][][][] toArray() {
+        double[][][][] array = new double[nx][ny][nz][dim];
+        for (int d = 0; d < dim; d++)
+            for (int k = 0; k < nz; k++)
+                for (int j = 0; j < ny; j++)
+                    for (int i = 0; i < nx; i++) {
+                        array[i][j][k][d] = get(i,j,k,d);
+                    }
+        return array;
     }
 
     public int sizeX() {return nx;}
