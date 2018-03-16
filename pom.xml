@@ -26,12 +26,5 @@
         <artifactId>commons-io</artifactId>
         <version>2.5</version>
     </dependency>
-    <dependency>
-      <groupId>com.ericbarnhill</groupId>
-      <artifactId>ArrayMath</artifactId>
-      <scope>system</scope>
-      <systemPath>/home/ericbarnhill/.m2/repository/com/ericbarnhill/arrayMath/0.2-SNAPSHOT/arrayMath-0.2-SNAPSHOT.jar</systemPath>
-      <version>0.2</version>
-    </dependency>
   </dependencies>
 </project>
