@@ -7,12 +7,7 @@ volumes.  When a volume is read from a file, the image intensities are stored
 in a four-dimensional double array.  The array indices match the order in the
 'dim' array of the header.
 
-A jar can be built using Apache Ant by executing 'ant' in the project
-directory.  An example main class is included and the jar will execute it when
-run with the '-jar' option.  The following example will print the volume
-dimensions and datatype to the console:
-
-java -Xmx512M -jar niftijio.jar example.nii.gz
+A jar can be built using Maven by executing 'mvn package'.
 
 The file format specification can be found here:
 
